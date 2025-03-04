@@ -1,4 +1,4 @@
-# README - Specyfikacja Systemu Magazynowego
+#  Specyfikacja Systemu Magazynowego
 
 ## 1. Wprowadzenie
 
