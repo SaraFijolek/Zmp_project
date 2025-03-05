@@ -13,7 +13,7 @@ Poniżej przedstawiono listę funkcjonalności systemu wraz z informacją, na ja
 | 1        | Pierwszy administrator jest automatycznie dodany do systemu.                                                 | X       |         |            |             |
 | 2        | Administrator może zalogować się w systemie.                                                                 | X       | X       |            | X           |
 | 3        | Administrator może tworzyć nowych użytkowników                                                               | X       | X       |            | X           |
-| 4        | Użytkownik może zalogować się w systemie                                                                     | X       |         | X          | X           |
+| 4        | Użytkownik może zalogować się w systemie                                                                     | X       |         | X          |             |
 | 5        | Resetowanie hasła                                                                                            |         | X       | X          | X           |
 | 6        | Wylogowywanie się                                                                                            |         | X       | X          | X           |
 | 7        | Administrator może wyświetlić stan magazynowy                                                                | X       | X       |            | X           |
