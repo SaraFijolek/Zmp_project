@@ -1,4 +1,6 @@
-#  Specyfikacja Systemu Magazynowego
+#  Specyfikacja Systemu Magazynowego  
+
+Sara Fijołek - Web App
 
 ## 1. Wprowadzenie
 
@@ -47,4 +49,4 @@ System wymaga dostępu do API oraz obsługi platform Web, Mobile i Desktop, w za
 - **Aplikacja webowa**: TypeScript, React
 - **API**: PHP, Laravel, MySQL
 - **Aplikacja mobilna**: Dart, Flutter
-
+  
