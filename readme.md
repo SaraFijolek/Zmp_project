@@ -1,6 +1,6 @@
 #  Specyfikacja Systemu Magazynowego  
 
-Sara Fijołek - Web App
+#Sara Fijołek - Web App
 
 ## 1. Wprowadzenie
 
