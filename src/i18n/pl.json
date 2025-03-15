@@ -1,0 +1,36 @@
+{
+  "common": {
+    "appName": "Panel Administracyjny",
+    "language": "Język",
+    "polish": "Polski",
+    "english": "Angielski",
+    "logout": "Wyloguj"
+  },
+  "login": {
+    "title": "Logowanie",
+    "username": "Nazwa użytkownika",
+    "password": "Hasło",
+    "loginButton": "Zaloguj się",
+    "resetPassword": "Resetuj hasło"
+  },
+  "dashboard": {
+    "title": "Panel Główny",
+    "welcome": "Witaj w panelu administracyjnym!"
+  },
+  "users": {
+    "title": "Zarządzanie Użytkownikami",
+    "addUser": "Dodaj nowego użytkownika",
+    "userList": "Lista użytkowników"
+  },
+  "inventory": {
+    "title": "Magazyn",
+    "addItem": "Dodaj przedmiot",
+    "itemList": "Lista przedmiotów w magazynie"
+  },
+  "reports": {
+    "title": "Raporty",
+    "generateReport": "Generuj raport",
+    "reminder": "Przypomnienie o raporcie"
+  }
+}
+

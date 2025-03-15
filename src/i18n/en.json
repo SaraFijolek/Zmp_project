@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "Admin Panel",
+    "language": "Language",
+    "polish": "Polish",
+    "english": "English",
+    "logout": "Logout"
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Log in",
+    "resetPassword": "Reset password"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to the admin panel!"
+  },
+  "users": {
+    "title": "User Management",
+    "addUser": "Add new user",
+    "userList": "User list"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "addItem": "Add item",
+    "itemList": "Item list"
+  },
+  "reports": {
+    "title": "Reports",
+    "generateReport": "Generate report",
+    "reminder": "Report reminder"
+  }
+}
