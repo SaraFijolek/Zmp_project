@@ -1,52 +1,54 @@
-#  Specyfikacja Systemu Magazynowego  
+# React + TypeScript + Vite
 
-#  Sara Fijołek - Web App
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 1. Wprowadzenie
+Currently, two official plugins are available:
 
-System magazynowy ma na celu usprawnienie zarządzania zasobami magazynowymi poprzez automatyzację procesów logowania, zarządzania użytkownikami, monitorowania stanów magazynowych oraz obsługę operacji online i offline.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 2. Funkcjonalności systemu
+## Expanding the ESLint configuration
 
-Poniżej przedstawiono listę funkcjonalności systemu wraz z informacją, na jakich platformach są dostępne:
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-| **L.p.** | **Funkcjonalność**                                                                                           | **API** | **Web** | **Mobile** | **Desktop** |
-| -------- | ------------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ----------- |
-| 1        | Pierwszy administrator jest automatycznie dodany do systemu.                                                 | X       |         |            |             |
-| 2        | Administrator może zalogować się w systemie.                                                                 | X       | X       |            | X           |
-| 3        | Administrator może tworzyć nowych użytkowników                                                               | X       | X       |            | X           |
-| 4        | Użytkownik może zalogować się w systemie                                                                     | X       |         | X          |             |
-| 5        | Resetowanie hasła                                                                                            |         | X       | X          | X           |
-| 6        | Wylogowywanie się                                                                                            |         | X       | X          | X           |
-| 7        | Administrator może wyświetlić stan magazynowy                                                                | X       | X       |            | X           |
-| 8        | Administrator może modyfikować stan magazynowy                                                               | X       | X       |            | X           |
-| 9        | Administrator może generować raporty stanu magazynowego                                                      | X       | X       |            | X           |
-| 10       | Administrator otrzymuje powiadomienia przypominające o zrobieniu raportu stanu magazynowego                  | X       | X       |            | X           |
-| 11       | Użytkownik może skanować kod kreskowy produktu, podaje ilość, podaje lokalizację i przesyła na stan magazynu | X       |         | X          |             |
-| 12       | Użytkownik może zobaczyć listę produktów w magazynie                                                         | X       |         | X          |             |
-| 13       | Użytkownik może znaleźć lokalizację produktów w magazynie                                                    | X       |         | X          |             |
-| 14       | W przypadku gdy jest się offline, zadania dodają się do kolejki wykonania                                    | X       |         | X          | X           |
-| 15       | Pobranie zawartości bazy danych do użytku offline                                                            | X       |         | X          | X           |
-| 16       | Użytkownik może dodawać nowe przedmioty                                                                      | X       | X       |            | X           |
-| 17       | Obsługa języka polskiego i angielskiego                                                                      |         | X       | X          | X           |
-| 18       | Użytkownik dostaje powiadomienie związane z przywróceniem połączenia z internetem i synchronizacji danych    | X       |         | X          |             |
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
 
-## 3. Baza danych
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-System magazynowy wykorzystuje bazę danych do przechowywania informacji o:
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-- użytkownikach/administratorach,
-- przedmiotach,
-- stanie magazynu.
-
-## 4. Wymagania techniczne
-
-System wymaga dostępu do API oraz obsługi platform Web, Mobile i Desktop, w zależności od funkcjonalności.
-
-## 5. Technologie projektowe
-
-- **Aplikacja desktop**: C#, .NET
-- **Aplikacja webowa**: TypeScript, React
-- **API**: PHP, Laravel, MySQL
-- **Aplikacja mobilna**: Dart, Flutter
-  
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
+```
