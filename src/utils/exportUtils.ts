@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 
-// Eksport jako CSV
+
 export function exportToCSV(data) {
     let csvContent = "data:text/csv;charset=utf-8,Produkt,Ilość,Data aktualizacji\n";
     data.forEach(item => {
@@ -16,7 +16,7 @@ export function exportToCSV(data) {
     link.click();
 }
 
-// Eksport jako PDF
+
 export function exportToPDF(data) {
     const doc = new jsPDF();
     doc.text("Raport magazynowy", 20, 10);
