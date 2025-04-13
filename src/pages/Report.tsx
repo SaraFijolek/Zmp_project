@@ -15,7 +15,7 @@ function Reports() {
 
     return (
         <div>
-            <h2>📊 Raport magazynowy</h2>
+            <h2> Raport magazynowy</h2>
             <table border="1">
                 <thead>
                 <tr>
