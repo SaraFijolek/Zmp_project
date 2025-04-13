@@ -1,11 +1,10 @@
 import React, { useState, FormEvent } from 'react';
+import { registerAdmin } from "../api/api";
 
 const RegisterAdmin: React.FC = () => {
-
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -15,41 +14,21 @@ const RegisterAdmin: React.FC = () => {
         setError('');
         setSuccess('');
 
-
         if (!username || !email || !password) {
             setError('Wszystkie pola muszą być wypełnione!');
             return;
         }
 
         try {
+            const data = await registerAdmin(username, email, password);  // Użyj funkcji z API
 
-            const response = await fetch('', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username,
-                    email,
-                    password,
-                    role: 'admin',
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                setError(errorData.error || 'Wystąpił błąd w rejestracji.');
-                return;
-            }
-
-            const data = await response.json();
             if (data.success) {
                 setSuccess('Administrator został zarejestrowany pomyślnie!');
                 setUsername('');
                 setEmail('');
                 setPassword('');
             } else {
-                setError('Nie udało się zarejestrować administratora.');
+                setError(data.error || 'Nie udało się zarejestrować administratora.');
             }
         } catch (err) {
             console.error(err);
@@ -117,3 +96,4 @@ const RegisterAdmin: React.FC = () => {
 };
 
 export default RegisterAdmin;
+
