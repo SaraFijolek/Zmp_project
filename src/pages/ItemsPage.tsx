@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { listItems, createItem, modifyItem } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import "../App.css"; // jednorazowy import globalnych styli
+import "../App.css";
 
 interface Item { id: number; name: string; }
 
