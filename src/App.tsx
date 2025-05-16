@@ -1,32 +1,44 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useContext } from "react";
-import LanguageSwitcher from "./LanguageSwitcher";
-import Dashboard from "./pages/Dashboard";
-import Login from "./pages/login";
-import Report from "./pages/Report";
-import { AuthContext } from "./context/AuthContext";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import NavBar from "./context/NavBar";
+import Login from "./pages/Login";
+import ItemsPage from "./pages/ItemsPage";
+import UsersPage from "./pages/UsersPage";
+import { AuthProvider, ProtectedRoute } from "./context/AuthContext";
 import "./App.css";
+import "./api/api.ts"
+
 
 function App() {
-    const { t } = useTranslation();
-    const { user } = useContext(AuthContext); // Sprawdzenie czy użytkownik jest zalogowany
-
     return (
-        <Router>
-            <LanguageSwitcher />
-            <h1>{t("Witaj w aplikacji do zarządzania magazynem")}</h1>
-
-            <Routes>
-                {/* Jeśli użytkownik nie jest zalogowany, przekieruj na login */}
-                <Route path="/" element={user ? <Dashboard /> : <Login />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/reports" element={<Report />} />
-                <Route path="/login" element={<Login />} />
-            </Routes>
-        </Router>
+        <AuthProvider>
+            <Router>
+                <NavBar />
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route
+                        path="/items"
+                        element={
+                            <ProtectedRoute role="admin">
+                                <ItemsPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/users"
+                        element={
+                            <ProtectedRoute role="admin">
+                                <UsersPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route path="*" element={<Navigate to="/items" replace />} />
+                </Routes>
+            </Router>
+        </AuthProvider>
     );
 }
 
 export default App;
+
+
 
