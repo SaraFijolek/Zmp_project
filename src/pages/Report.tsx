@@ -1,22 +1,19 @@
-import { useState, useEffect } from "react";
-import { getReport } from "../api/api";
-import { exportToCSV, exportToPDF } from "../utils/exportUtils";
-
-function Reports() {
-    const [reportData, setReportData] = useState([]);
+const Report: React.FC = () => {
+    const { token } = useAuth();
+    const [reportData, setReportData] = useState<any[]>([]);
 
     useEffect(() => {
-        async function fetchReport() {
-            const data = await getReport();
+        if (!token) return;
+        (async () => {
+            const data = await getReport(token);
             setReportData(data);
-        }
-        fetchReport();
-    }, []);
+        })();
+    }, [token]);
 
     return (
         <div>
-            <h2> Raport magazynowy</h2>
-            <table border="1">
+            <h2>Raport magazynowy</h2>
+            <table border={1}>
                 <thead>
                 <tr>
                     <th>Produkt</th>
@@ -25,8 +22,8 @@ function Reports() {
                 </tr>
                 </thead>
                 <tbody>
-                {reportData.map((item, index) => (
-                    <tr key={index}>
+                {reportData.map((item, i) => (
+                    <tr key={i}>
                         <td>{item.name}</td>
                         <td>{item.quantity}</td>
                         <td>{item.last_updated}</td>
@@ -34,10 +31,10 @@ function Reports() {
                 ))}
                 </tbody>
             </table>
-            <button onClick={() => exportToCSV(reportData)}> Eksportuj CSV</button>
-            <button onClick={() => exportToPDF(reportData)}> Eksportuj PDF</button>
+            <button onClick={() => exportToCSV(reportData)}>Eksportuj CSV</button>
+            <button onClick={() => exportToPDF(reportData)}>Eksportuj PDF</button>
         </div>
     );
-}
+};
 
-export default Reports;
+export default Report;
