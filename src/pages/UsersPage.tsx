@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { listUsers, createUser } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import "../App.css";  // import globalnych styli
+import "../App.css"; 
 
 interface User {
     id: number;
