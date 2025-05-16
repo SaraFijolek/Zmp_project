@@ -1,4 +1,4 @@
-// src/pages/ItemsPage.tsx
+
 import React, { useEffect, useState } from "react";
 import { listItems, createItem, modifyItem } from "../api/api";
 import { useAuth } from "../context/AuthContext";
