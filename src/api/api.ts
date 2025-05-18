@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080/api";
+
 
 
 function buildHeaders(token?: string, extra?: Record<string, string>) {
@@ -16,26 +16,26 @@ function buildHeaders(token?: string, extra?: Record<string, string>) {
 
 
 export async function loginUser(email: string, password: string) {
-    const res = await fetch(`${API_URL}/user/login`, {
+    const res = await fetch(`http://localhost:8080/api/user/login`, {
         method: "POST",
         headers: buildHeaders(undefined, { Email: email, Password: password }),
     });
     if (!res.ok) throw new Error("Błąd logowania użytkownika");
-    return await res.json(); 
+    return await res.json();
 }
 
 export async function loginAdmin(email: string, password: string) {
-    const res = await fetch(`${API_URL}/admin/login`, {
+    const res = await fetch(`http://localhost:8080/api/admin/login`, {
         method: "POST",
         headers: buildHeaders(undefined, { Email: email, Password: password }),
     });
     if (!res.ok) throw new Error("Błąd logowania administratora");
-    return await res.json(); 
+    return await res.json();
 }
 
 
 export async function resetAdminPassword(token: string) {
-    const res = await fetch(`${API_URL}/admin/reset`, {
+    const res = await fetch(`http://localhost:8080/api/admin/reset`, {
         method: "PUT",
         headers: buildHeaders(token),
     });
@@ -43,7 +43,7 @@ export async function resetAdminPassword(token: string) {
 }
 
 export async function getAdminNotifications(token: string) {
-    const res = await fetch(`${API_URL}/admin/notification`, {
+    const res = await fetch(`http://localhost:8080/api/admin/notification`, {
         method: "GET",
         headers: buildHeaders(token),
     });
@@ -53,12 +53,12 @@ export async function getAdminNotifications(token: string) {
 
 
 export async function listUsers(token: string) {
-    const res = await fetch(`${API_URL}/user/index`, {
+    const res = await fetch(`http://localhost:8080/api/user/index`, {
         method: "GET",
         headers: buildHeaders(token),
     });
     if (!res.ok) throw new Error("Błąd pobierania listy użytkowników");
-    return await res.json(); 
+    return await res.json();
 }
 
 export async function createUser(
@@ -68,7 +68,7 @@ export async function createUser(
     name: string,
     surname: string
 ) {
-    const res = await fetch(`${API_URL}/user/create`, {
+    const res = await fetch(`http://localhost:8080/api/user/create`, {
         method: "POST",
         headers: buildHeaders(token, {
             Email: email,
@@ -99,7 +99,7 @@ export async function modifyUser(
     if (data.surname) extra.Surname = data.surname;
     if (data.accountActive !== undefined)
         extra.AccountActive = data.accountActive.toString();
-    const res = await fetch(`${API_URL}/user/modify`, {
+    const res = await fetch(`http://localhost:8080/api/user/modify`, {
         method: "PUT",
         headers: buildHeaders(token, extra),
     });
@@ -108,8 +108,8 @@ export async function modifyUser(
 }
 
 export async function resetUserPassword(token: string, userId: number) {
-  
-    const res = await fetch(`${API_URL}/user/reset`, {
+
+    const res = await fetch(`http://localhost:8080/api/user/reset`, {
         method: "PUT",
         headers: buildHeaders(token, { UserId: userId.toString() }),
     });
@@ -118,7 +118,7 @@ export async function resetUserPassword(token: string, userId: number) {
 
 
 export async function listItems(token: string) {
-    const res = await fetch(`${API_URL}/item/index`, {
+    const res = await fetch(`http://localhost:8080/api/item/index`, {
         method: "GET",
         headers: buildHeaders(token),
     });
@@ -127,12 +127,12 @@ export async function listItems(token: string) {
 }
 
 export async function createItem(token: string, name: string) {
-    const res = await fetch(`${API_URL}/item/create`, {
+    const res = await fetch(`http://localhost:8080/api/item/create`, {
         method: "POST",
         headers: buildHeaders(token, { Name: name }),
     });
     if (!res.ok) throw new Error("Błąd tworzenia przedmiotu");
-    return await res.json(); 
+    return await res.json();
 }
 
 export async function modifyItem(
@@ -142,21 +142,21 @@ export async function modifyItem(
 ) {
     const extra: Record<string,string> = { ID: id.toString() };
     if (name) extra.Name = name;
-    const res = await fetch(`${API_URL}/item/modify`, {
+    const res = await fetch(`http://localhost:8080/api/item/modify`, {
         method: "PUT",
         headers: buildHeaders(token, extra),
     });
     if (!res.ok) throw new Error("Błąd modyfikacji przedmiotu");
-    return await res.json(); 
+    return await res.json();
 }
 
 export async function listStock(token: string) {
-    const res = await fetch(`${API_URL}/stock/index`, {
+    const res = await fetch(`http://localhost:8080/api/stock/index`, {
         method: "GET",
         headers: buildHeaders(token),
     });
     if (!res.ok) throw new Error("Błąd pobierania stanu magazynu");
-    return await res.json(); 
+    return await res.json();
 }
 
 export async function addStock(
@@ -165,7 +165,7 @@ export async function addStock(
     amount: number,
     location: string
 ) {
-    const res = await fetch(`${API_URL}/stock/add`, {
+    const res = await fetch(`http://localhost:8080/api/stock/add`, {
         method: "POST",
         headers: buildHeaders(token, {
             ProductID: productId.toString(),
@@ -174,7 +174,7 @@ export async function addStock(
         }),
     });
     if (!res.ok) throw new Error("Błąd dodawania stanu magazynowego");
-    return await res.json(); 
+    return await res.json();
 }
 
 export async function modifyStock(
@@ -191,22 +191,23 @@ export async function modifyStock(
         extra.ProductID = data.productId.toString();
     if (data.amount !== undefined) extra.Amount = data.amount.toString();
     if (data.location) extra.Location = data.location;
-    const res = await fetch(`${API_URL}/stock/modify`, {
+    const res = await fetch(`http://localhost:8080/api/stock/modify`, {
         method: "PUT",
         headers: buildHeaders(token, extra),
     });
     if (!res.ok) throw new Error("Błąd modyfikacji stanu magazynowego");
-    return await res.json(); 
+    return await res.json();
 }
 
 
 export async function getReport(token: string) {
-    const res = await fetch(`${API_URL}/stock/index`, {
+    const res = await fetch(`http://localhost:8080/api/stock/index`, {
         method: "GET",
         headers: buildHeaders(token),
     });
     if (!res.ok) throw new Error("Błąd pobierania raportu");
-    return await res.json(); 
+    return await res.json();
 }
+
 
 
