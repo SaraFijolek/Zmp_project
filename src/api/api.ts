@@ -18,7 +18,8 @@ function buildHeaders(token?: string, extra?: Record<string, string>) {
 export async function loginUser(email: string, password: string) {
     const res = await fetch(`http://localhost:8080/api/user/login`, {
         method: "POST",
-        headers: buildHeaders(undefined, { Email: email, Password: password }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
     });
     if (!res.ok) throw new Error("Błąd logowania użytkownika");
     return await res.json();
@@ -27,7 +28,8 @@ export async function loginUser(email: string, password: string) {
 export async function loginAdmin(email: string, password: string) {
     const res = await fetch(`http://localhost:8080/api/admin/login`, {
         method: "POST",
-        headers: buildHeaders(undefined, { Email: email, Password: password }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
     });
     if (!res.ok) throw new Error("Błąd logowania administratora");
     return await res.json();
