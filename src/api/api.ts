@@ -1,65 +1,50 @@
 
 
-
 function buildHeaders(token?: string, extra?: Record<string, string>) {
     const headers: Record<string,string> = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
     };
-    if (token) {
-        headers["Token"] = token;
-    }
-    if (extra) {
-        Object.assign(headers, extra);
-    }
+    if (token) headers['Token'] = token;
+    if (extra) Object.assign(headers, extra);
     return headers;
 }
 
+export async function loginUser(
+    email: string,
+    password: string,
+    google2fa: string
+) {
 
-export async function loginUser(email: string, password: string) {
-    const res = await fetch(`http://localhost:8080/api/user/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+    const headers = buildHeaders(undefined, {
+        Email: email,
+        Password: password,
+        Google2fa: google2fa,
     });
-    if (!res.ok) throw new Error("Błąd logowania użytkownika");
-    return await res.json();
+    const res = await fetch(`/api/user/login`, {
+        method: 'POST',
+        headers,
+    });
+    if (!res.ok) throw new Error('Błąd logowania użytkownika');
+    return await res.json(); // { access_token, message }
 }
 
-export async function loginAdmin(email: string, password: string) {
-    const res = await fetch(`http://localhost:8080/api/admin/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    });
-    if (!res.ok) throw new Error("Błąd logowania administratora");
-    return await res.json();
-}
+export async function resetUserPassword(token: string) {
 
-
-export async function resetAdminPassword(token: string) {
-    const res = await fetch(`http://localhost:8080/api/admin/reset`, {
-        method: "PUT",
+    const res = await fetch(`/api/user/reset`, {
+        method: 'PUT',
         headers: buildHeaders(token),
     });
-    if (!res.ok) throw new Error("Błąd resetowania hasła admina");
+    if (!res.ok) throw new Error('Błąd resetowania hasła użytkownika');
+    return await res.json(); // { message }
 }
-
-export async function getAdminNotifications(token: string) {
-    const res = await fetch(`http://localhost:8080/api/admin/notification`, {
-        method: "GET",
-        headers: buildHeaders(token),
-    });
-    if (!res.ok) throw new Error("Błąd pobierania powiadomień");
-    return await res.json(); // np. { message, date }
-}
-
 
 export async function listUsers(token: string) {
-    const res = await fetch(`http://localhost:8080/api/user/index`, {
-        method: "GET",
+
+    const res = await fetch(`/api/user/index`, {
+        method: 'GET',
         headers: buildHeaders(token),
     });
-    if (!res.ok) throw new Error("Błąd pobierania listy użytkowników");
+    if (!res.ok) throw new Error('Błąd pobierania listy użytkowników');
     return await res.json();
 }
 
@@ -70,17 +55,19 @@ export async function createUser(
     name: string,
     surname: string
 ) {
-    const res = await fetch(`http://localhost:8080/api/user/create`, {
-        method: "POST",
-        headers: buildHeaders(token, {
-            Email: email,
-            Phone: phone,
-            Name: name,
-            Surname: surname,
-        }),
+
+    const headers = buildHeaders(token, {
+        Email: email,
+        Phone: phone,
+        Name: name,
+        Surname: surname,
     });
-    if (!res.ok) throw new Error("Błąd tworzenia użytkownika");
-    return await res.json(); // { success }
+    const res = await fetch(`/api/user/create`, {
+        method: 'POST',
+        headers,
+    });
+    if (!res.ok) throw new Error('Błąd tworzenia użytkownika');
+    return await res.json();
 }
 
 export async function modifyUser(
@@ -94,46 +81,78 @@ export async function modifyUser(
         accountActive?: boolean;
     }
 ) {
+
     const extra: Record<string,string> = { UserId: userId.toString() };
     if (data.email) extra.Email = data.email;
     if (data.phone) extra.Phone = data.phone;
     if (data.name) extra.Name = data.name;
     if (data.surname) extra.Surname = data.surname;
-    if (data.accountActive !== undefined)
-        extra.AccountActive = data.accountActive.toString();
-    const res = await fetch(`http://localhost:8080/api/user/modify`, {
-        method: "PUT",
+    if (data.accountActive !== undefined) extra.AccountActive = data.accountActive.toString();
+    const res = await fetch(`/api/user/modify`, {
+        method: 'PUT',
         headers: buildHeaders(token, extra),
     });
-    if (!res.ok) throw new Error("Błąd modyfikacji użytkownika");
-    return await res.json(); // { success }
+    if (!res.ok) throw new Error('Błąd modyfikacji użytkownika');
+    return await res.json();
 }
 
-export async function resetUserPassword(token: string, userId: number) {
+// ADMIN (Web/Desktop app)
+export async function loginAdmin(
+    email: string,
+    password: string,
+    google2fa: string
+) {
 
-    const res = await fetch(`http://localhost:8080/api/user/reset`, {
-        method: "PUT",
-        headers: buildHeaders(token, { UserId: userId.toString() }),
+    const headers = buildHeaders(undefined, {
+        Email: email,
+        Password: password,
+        Google2fa: google2fa,
     });
-    if (!res.ok) throw new Error("Błąd resetowania hasła użytkownika");
+    const res = await fetch(`/api/admin/login`, {
+        method: 'POST',
+        headers,
+    });
+    if (!res.ok) throw new Error('Błąd logowania administratora');
+    return await res.json(); // { access_token, message }
 }
 
+export async function resetAdminPassword(token: string) {
 
-export async function listItems(token: string) {
-    const res = await fetch(`http://localhost:8080/api/item/index`, {
-        method: "GET",
+    const res = await fetch(`/api/admin/reset`, {
+        method: 'PUT',
         headers: buildHeaders(token),
     });
-    if (!res.ok) throw new Error("Błąd pobierania listy przedmiotów");
+    if (!res.ok) throw new Error('Błąd resetowania hasła admina');
+    return await res.json();
+}
+
+export async function getAdminNotifications(token: string) {
+
+    const res = await fetch(`/api/admin/notification`, {
+        method: 'GET',
+        headers: buildHeaders(token),
+    });
+    if (!res.ok) throw new Error('Błąd pobierania powiadomień');
+    return await res.json();
+}
+
+export async function listItems(token: string) {
+
+    const res = await fetch(`/api//item/index`, {
+        method: 'GET',
+        headers: buildHeaders(token),
+    });
+    if (!res.ok) throw new Error('Błąd pobierania listy przedmiotów');
     return await res.json();
 }
 
 export async function createItem(token: string, name: string) {
-    const res = await fetch(`http://localhost:8080/api/item/create`, {
-        method: "POST",
+
+    const res = await fetch(`/api/item/create`, {
+        method: 'POST',
         headers: buildHeaders(token, { Name: name }),
     });
-    if (!res.ok) throw new Error("Błąd tworzenia przedmiotu");
+    if (!res.ok) throw new Error('Błąd tworzenia przedmiotu');
     return await res.json();
 }
 
@@ -142,22 +161,24 @@ export async function modifyItem(
     id: number,
     name?: string
 ) {
+
     const extra: Record<string,string> = { ID: id.toString() };
     if (name) extra.Name = name;
-    const res = await fetch(`http://localhost:8080/api/item/modify`, {
-        method: "PUT",
+    const res = await fetch(`/api/item/modify`, {
+        method: 'PUT',
         headers: buildHeaders(token, extra),
     });
-    if (!res.ok) throw new Error("Błąd modyfikacji przedmiotu");
+    if (!res.ok) throw new Error('Błąd modyfikacji przedmiotu');
     return await res.json();
 }
 
 export async function listStock(token: string) {
-    const res = await fetch(`http://localhost:8080/api/stock/index`, {
-        method: "GET",
+
+    const res = await fetch(`/api/stock/index`, {
+        method: 'GET',
         headers: buildHeaders(token),
     });
-    if (!res.ok) throw new Error("Błąd pobierania stanu magazynu");
+    if (!res.ok) throw new Error('Błąd pobierania stanu magazynu');
     return await res.json();
 }
 
@@ -167,15 +188,16 @@ export async function addStock(
     amount: number,
     location: string
 ) {
-    const res = await fetch(`http://localhost:8080/api/stock/add`, {
-        method: "POST",
+
+    const res = await fetch(`/api/stock/add`, {
+        method: 'POST',
         headers: buildHeaders(token, {
             ProductID: productId.toString(),
             Amount: amount.toString(),
             Location: location,
         }),
     });
-    if (!res.ok) throw new Error("Błąd dodawania stanu magazynowego");
+    if (!res.ok) throw new Error('Błąd dodawania stanu magazynowego');
     return await res.json();
 }
 
@@ -188,26 +210,16 @@ export async function modifyStock(
         location?: string;
     }
 ) {
+
     const extra: Record<string,string> = { ID: id.toString() };
-    if (data.productId !== undefined)
-        extra.ProductID = data.productId.toString();
+    if (data.productId !== undefined) extra.ProductID = data.productId.toString();
     if (data.amount !== undefined) extra.Amount = data.amount.toString();
     if (data.location) extra.Location = data.location;
-    const res = await fetch(`http://localhost:8080/api/stock/modify`, {
-        method: "PUT",
+    const res = await fetch(`/api/stock/modify`, {
+        method: 'PUT',
         headers: buildHeaders(token, extra),
     });
-    if (!res.ok) throw new Error("Błąd modyfikacji stanu magazynowego");
-    return await res.json();
-}
-
-
-export async function getReport(token: string) {
-    const res = await fetch(`http://localhost:8080/api/stock/index`, {
-        method: "GET",
-        headers: buildHeaders(token),
-    });
-    if (!res.ok) throw new Error("Błąd pobierania raportu");
+    if (!res.ok) throw new Error('Błąd modyfikacji stanu magazynowego');
     return await res.json();
 }
 
