@@ -1,44 +1,34 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import NavBar from "./context/NavBar";
-import Login from "./pages/Login";
+
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import Sidebar from "./context/Sidebar";
 import ItemsPage from "./pages/ItemsPage";
 import UsersPage from "./pages/UsersPage";
-import { AuthProvider, ProtectedRoute } from "./context/AuthContext";
+import Dashboard from "./pages/Dashboard";
 import "./App.css";
-import "./api/api.ts"
+import Login from "./pages/Login.tsx";
+import StockPage from "./pages/StockPage.tsx";
 
 
 function App() {
     return (
-        <AuthProvider>
-            <Router>
-                <NavBar />
-                <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route
-                        path="/items"
-                        element={
-                            <ProtectedRoute role="admin">
-                                <ItemsPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/users"
-                        element={
-                            <ProtectedRoute role="admin">
-                                <UsersPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route path="*" element={<Navigate to="/items" replace />} />
-                </Routes>
-            </Router>
-        </AuthProvider>
+        <Router>
+            <div className="app-container">
+                <Sidebar />
+
+                <div className="main-content">
+                    <Routes>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/items" element={<ItemsPage />} />
+                        <Route path="/users" element={<UsersPage />} />
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/stock" element={<StockPage />} />
+                        <Route path="*" element={<Dashboard/>} />
+                    </Routes>
+                </div>
+            </div>
+        </Router>
     );
 }
 
 export default App;
-
-
-
