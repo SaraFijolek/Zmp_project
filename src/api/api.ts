@@ -1,8 +1,8 @@
-
-
+const BASE_URL = "/api";
 function buildHeaders(token?: string, extra?: Record<string, string>) {
     const headers: Record<string,string> = {
         'Content-Type': 'application/json',
+        'Token': 'test_token3'
     };
     if (token) headers['Token'] = token;
     if (extra) Object.assign(headers, extra);
@@ -20,7 +20,7 @@ export async function loginUser(
         Password: password,
         Google2fa: google2fa,
     });
-    const res = await fetch(`/api/user/login`, {
+    const res = await fetch(`${BASE_URL}/user/login`, {
         method: 'POST',
         headers,
     });
@@ -30,7 +30,7 @@ export async function loginUser(
 
 export async function resetUserPassword(token: string) {
 
-    const res = await fetch(`/api/user/reset`, {
+    const res = await fetch(`${BASE_URL}/user/reset`, {
         method: 'PUT',
         headers: buildHeaders(token),
     });
@@ -108,7 +108,7 @@ export async function loginAdmin(
         Password: password,
         Google2fa: google2fa,
     });
-    const res = await fetch(`/api/admin/login`, {
+    const res = await fetch(`${BASE_URL}/admin/login`, {
         method: 'POST',
         headers,
     });
@@ -118,7 +118,7 @@ export async function loginAdmin(
 
 export async function resetAdminPassword(token: string) {
 
-    const res = await fetch(`/api/admin/reset`, {
+    const res = await fetch(`${BASE_URL}/admin/reset`, {
         method: 'PUT',
         headers: buildHeaders(token),
     });
@@ -128,7 +128,7 @@ export async function resetAdminPassword(token: string) {
 
 export async function getAdminNotifications(token: string) {
 
-    const res = await fetch(`/api/admin/notification`, {
+    const res = await fetch(`${BASE_URL}/admin/notification`, {
         method: 'GET',
         headers: buildHeaders(token),
     });
@@ -138,7 +138,7 @@ export async function getAdminNotifications(token: string) {
 
 export async function listItems(token: string) {
 
-    const res = await fetch(`/api//item/index`, {
+    const res = await fetch(`${BASE_URL}/item/index`, {
         method: 'GET',
         headers: buildHeaders(token),
     });
@@ -148,7 +148,7 @@ export async function listItems(token: string) {
 
 export async function createItem(token: string, name: string) {
 
-    const res = await fetch(`/api/item/create`, {
+    const res = await fetch(`${BASE_URL}/item/create`, {
         method: 'POST',
         headers: buildHeaders(token, { Name: name }),
     });
@@ -164,7 +164,7 @@ export async function modifyItem(
 
     const extra: Record<string,string> = { ID: id.toString() };
     if (name) extra.Name = name;
-    const res = await fetch(`/api/item/modify`, {
+    const res = await fetch(`${BASE_URL}/item/modify`, {
         method: 'PUT',
         headers: buildHeaders(token, extra),
     });
@@ -174,7 +174,7 @@ export async function modifyItem(
 
 export async function listStock(token: string) {
 
-    const res = await fetch(`/api/stock/index`, {
+    const res = await fetch(`${BASE_URL}/stock/index`, {
         method: 'GET',
         headers: buildHeaders(token),
     });
@@ -189,7 +189,7 @@ export async function addStock(
     location: string
 ) {
 
-    const res = await fetch(`/api/stock/add`, {
+    const res = await fetch(`${BASE_URL}/stock/add`, {
         method: 'POST',
         headers: buildHeaders(token, {
             ProductID: productId.toString(),
@@ -215,13 +215,12 @@ export async function modifyStock(
     if (data.productId !== undefined) extra.ProductID = data.productId.toString();
     if (data.amount !== undefined) extra.Amount = data.amount.toString();
     if (data.location) extra.Location = data.location;
-    const res = await fetch(`/api/stock/modify`, {
+    const res = await fetch(`${BASE_URL}/stock/modify`, {
         method: 'PUT',
         headers: buildHeaders(token, extra),
     });
     if (!res.ok) throw new Error('Błąd modyfikacji stanu magazynowego');
     return await res.json();
 }
-
 
 
