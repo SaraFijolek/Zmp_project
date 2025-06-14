@@ -1,34 +1,52 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Sidebar from './context/Sidebar';
+import Dashboard from './pages/Dashboard';
+import UsersPage from './pages/UsersPage';
+import ItemsPage from './pages/ItemsPage';
+import StockPage from './pages/StockPage';
+import Login from './pages/Login';
+import RegisterAdmin from './pages/Register';
+import './App.css';
 
-import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import Sidebar from "./context/Sidebar";
-import ItemsPage from "./pages/ItemsPage";
-import UsersPage from "./pages/UsersPage";
-import Dashboard from "./pages/Dashboard";
-import "./App.css";
-import Login from "./pages/Login.tsx";
-import StockPage from "./pages/StockPage.tsx";
+const AppContent: React.FC = () => {
+    const { token } = useAuth();
 
-
-function App() {
-    return (
-        <Router>
-            <div className="app-container">
-                <Sidebar />
-
-                <div className="main-content">
-                    <Routes>
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/items" element={<ItemsPage />} />
-                        <Route path="/users" element={<UsersPage />} />
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/stock" element={<StockPage />} />
-                        <Route path="*" element={<Dashboard/>} />
-                    </Routes>
-                </div>
+    if (!token) {
+        return (
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+                <Login />
             </div>
-        </Router>
+        );
+    }
+
+    return (
+        <div className="app-container">
+            <Sidebar />
+            <main className="main-content">
+                <Routes>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/users" element={<UsersPage />} />
+                    <Route path="/items" element={<ItemsPage />} />
+                    <Route path="/stock" element={<StockPage />} />
+                    <Route path="/register" element={<RegisterAdmin />} />
+                    <Route path="/login" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+            </main>
+        </div>
     );
-}
+};
+
+const App: React.FC = () => {
+    return (
+        <AuthProvider>
+            <Router>
+                <AppContent />
+            </Router>
+        </AuthProvider>
+    );
+};
 
 export default App;
