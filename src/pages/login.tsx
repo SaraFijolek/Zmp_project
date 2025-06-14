@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginAdmin } from "../api/api";
+import { loginAdmin, loginUser } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import "../App.css";
 
@@ -12,6 +12,7 @@ const Login: React.FC = () => {
     const [google2fa, setGoogle2fa] = useState<string>("");
     const [show2fa, setShow2fa] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
+    const [loginType, setLoginType] = useState<"user" | "admin">("admin");
 
     const handleSubmit = async () => {
         setError("");
@@ -21,85 +22,123 @@ const Login: React.FC = () => {
         }
 
         try {
-            // wywołujemy backend
-            const data = await loginAdmin(email.trim(), password.trim(), google2fa.trim());
+            
+            const data = loginType === "admin" 
+                ? await loginAdmin(email.trim(), password.trim(), google2fa.trim())
+                : await loginUser(email.trim(), password.trim(), google2fa.trim());
 
-            if (!data.token) {
+            if (!data.access_token) {
                 setError("Niepoprawna odpowiedź serwera (brak tokenu).");
                 return;
             }
 
-            // Zapisujemy token i rolę
-            login(data.token, "admin");
+         
+            login(data.access_token, loginType);
 
-            // Przekierujmy administratora np. do strony z listą przedmiotów (lub do panelu admina)
-            navigate("/admin/dashboard");
+            
+            navigate("/dashboard");
         } catch (err: any) {
-            // err.message pochodzi z `throw new Error("Błąd logowania administratora")`
             setError(err.message || "Nieznany błąd podczas logowania.");
-            console.error("Błąd w handleSubmit LoginAdmin:", err);
+            console.error("Błąd podczas logowania:", err);
         }
     };
 
+
+
     return (
-        <div className="page-card mt-4 mb-4" style={{ maxWidth: 360, margin: "0 auto" }}>
-            <h2 className="mb-4" style={{ textAlign: "center" }}>
-                Logowanie Administrator
-            </h2>
-
-            {error && (
-                <div style={{ color: "red", marginBottom: "1rem", textAlign: "center" }}>
-                    {error}
+        <div className="login-bg min-h-screen">
+            <div className="mb-6 text-center pt-8">
+                <h1 className="text-black text-2xl font-bold mb-2">
+                    Logowanie {loginType === "admin" ? "Administratora" : "Użytkownika"}
+                </h1>
+                <hr className="my-2" />
+            </div>
+            <div className="flex justify-center" style={{ marginTop: 100 }}>
+                <div className="login-card bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
+                    {error && (
+                        <div className="error-message mb-4 text-center">
+                            {error}
+                        </div>
+                    )}
+                    <form className="flex flex-col items-center space-y-8" style={{maxWidth: 320, margin: '0 auto'}} onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+                        <div className="w-full flex flex-col space-y-5 items-center">
+                            <div className="flex w-full space-x-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setLoginType("user")}
+                                    className={`flex-1 py-2 px-4 rounded ${loginType === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"}`}
+                                >
+                                    Użytkownik
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setLoginType("admin")}
+                                    className={`flex-1 py-2 px-4 rounded ${loginType === "admin" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"}`}
+                                >
+                                    Administrator
+                                </button>
+                            </div>
+                        </div>
+                        <div className="w-full flex flex-col space-y-5 items-center">
+                            <input
+                                id="email"
+                                type="email"
+                                placeholder="Wprowadź adres e-mail"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="input w-full text-center"
+                            />
+                        </div>
+                        <div className="w-full flex flex-col space-y-5 items-center">
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="Wprowadź hasło"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="input w-full text-center"
+                            />
+                        </div>
+                        {show2fa && (
+                            <div className="w-full space-y-5 items-center">
+                                <input
+                                    id="2fa"
+                                    type="text"
+                                    placeholder="Wprowadź kod 2FA"
+                                    value={google2fa}
+                                    onChange={(e) => setGoogle2fa(e.target.value)}
+                                    className="input w-full text-center"
+                                />
+                            </div>
+                        )}
+                        <div className="login-btns-col w-full">
+                            <button
+                                type="button"
+                                onClick={() => setShow2fa((prev) => !prev)}
+                                className="secondary text-sm w-full"
+                            >
+                                {show2fa ? "Ukryj 2FA" : "Wprowadź kod 2FA"}
+                            </button>
+                            <button
+                                type="submit"
+                                className="primary text-sm w-full"
+                            >
+                                Zaloguj
+                            </button>
+                        </div>
+                        <div className="text-center mt-2 w-full">
+                            <a
+                                href="/reset-password"
+                                className="text-sm text-blue-600 hover:text-blue-800"
+                            >
+                                Zapomniałeś hasła?
+                            </a>
+                        </div>
+                    </form>
                 </div>
-            )}
-
-            <input
-                type="email"
-                placeholder="E-mail"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{ width: "100%", marginBottom: "12px", padding: "8px" }}
-            />
-
-            <input
-                type="password"
-                placeholder="Hasło"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{ width: "100%", marginBottom: "12px", padding: "8px" }}
-            />
-
-            <button
-                className="secondary mt-3"
-                onClick={() => setShow2fa((prev) => !prev)}
-                style={{ width: "100%" }}
-            >
-                {show2fa ? "Ukryj 2FA" : "Wprowadź kod 2FA"}
-            </button>
-
-            {show2fa && (
-                <input
-                    type="text"
-                    placeholder="Google 2FA kod"
-                    value={google2fa}
-                    onChange={(e) => setGoogle2fa(e.target.value)}
-                    style={{ width: "100%", marginTop: "12px", padding: "8px" }}
-                />
-            )}
-
-            <button className="primary mt-4" onClick={handleSubmit} style={{ width: "100%" }}>
-                Zaloguj
-            </button>
-
-            <div style={{ marginTop: "1rem", textAlign: "center" }}>
-                <a href="ResetPasswordAdmin.tsx" style={{ color: "#3b82f6", textDecoration: "none" }}>
-                    Zapomniałeś hasła?
-                </a>
             </div>
         </div>
     );
 };
 
 export default Login;
-
-
