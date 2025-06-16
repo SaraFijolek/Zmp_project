@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginAdmin, loginUser } from "../api/api";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 import "../App.css";
 
 const Login: React.FC = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
+    const { i18n, t } = useTranslation();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [google2fa, setGoogle2fa] = useState<string>("");
@@ -14,49 +16,66 @@ const Login: React.FC = () => {
     const [error, setError] = useState<string>("");
     const [loginType, setLoginType] = useState<"user" | "admin">("admin");
 
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
+
     const handleSubmit = async () => {
         setError("");
         if (!email.trim() || !password.trim()) {
-            setError("Podaj adres e-mail oraz hasło.");
+            setError(t('auth.loginError'));
             return;
         }
 
         try {
-            
             const data = loginType === "admin" 
                 ? await loginAdmin(email.trim(), password.trim(), google2fa.trim())
                 : await loginUser(email.trim(), password.trim(), google2fa.trim());
 
             if (!data.access_token) {
-                setError("Niepoprawna odpowiedź serwera (brak tokenu).");
+                setError(t('auth.loginError'));
                 return;
             }
 
-         
             login(data.access_token, loginType);
-
-            
             navigate("/dashboard");
         } catch (err: any) {
-            setError(err.message || "Nieznany błąd podczas logowania.");
             console.error("Błąd podczas logowania:", err);
+            if (err.message.includes('2FA')) {
+                setError(t('auth.twoFactorError'));
+                setShow2fa(true);
+            } else {
+                setError(err.message || t('auth.loginError'));
+            }
         }
     };
 
-
-
     return (
         <div className="login-bg min-h-screen">
+            <div className="absolute top-4 right-4 flex space-x-2">
+                <button
+                    onClick={() => changeLanguage("pl")}
+                    className={`px-3 py-1 rounded text-sm ${i18n.language === 'pl' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                >
+                    PL
+                </button>
+                <button
+                    onClick={() => changeLanguage("en")}
+                    className={`px-3 py-1 rounded text-sm ${i18n.language === 'en' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                >
+                    EN
+                </button>
+            </div>
             <div className="mb-6 text-center pt-8">
                 <h1 className="text-black text-2xl font-bold mb-2">
-                    Logowanie {loginType === "admin" ? "Administratora" : "Użytkownika"}
+                    {t('auth.adminLogin')}
                 </h1>
                 <hr className="my-2" />
             </div>
             <div className="flex justify-center" style={{ marginTop: 100 }}>
                 <div className="login-card bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
                     {error && (
-                        <div className="error-message mb-4 text-center">
+                        <div className="error-message mb-4 text-center text-red-600">
                             {error}
                         </div>
                     )}
@@ -68,14 +87,14 @@ const Login: React.FC = () => {
                                     onClick={() => setLoginType("user")}
                                     className={`flex-1 py-2 px-4 rounded ${loginType === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"}`}
                                 >
-                                    Użytkownik
+                                    {t('auth.userLogin')}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setLoginType("admin")}
                                     className={`flex-1 py-2 px-4 rounded ${loginType === "admin" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"}`}
                                 >
-                                    Administrator
+                                    {t('auth.adminLogin')}
                                 </button>
                             </div>
                         </div>
@@ -83,7 +102,7 @@ const Login: React.FC = () => {
                             <input
                                 id="email"
                                 type="email"
-                                placeholder="Wprowadź adres e-mail"
+                                placeholder={t('common.email')}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="input w-full text-center"
@@ -93,7 +112,7 @@ const Login: React.FC = () => {
                             <input
                                 id="password"
                                 type="password"
-                                placeholder="Wprowadź hasło"
+                                placeholder={t('common.password')}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="input w-full text-center"
@@ -104,7 +123,7 @@ const Login: React.FC = () => {
                                 <input
                                     id="2fa"
                                     type="text"
-                                    placeholder="Wprowadź kod 2FA"
+                                    placeholder={t('auth.twoFactorEnter')}
                                     value={google2fa}
                                     onChange={(e) => setGoogle2fa(e.target.value)}
                                     className="input w-full text-center"
@@ -117,13 +136,13 @@ const Login: React.FC = () => {
                                 onClick={() => setShow2fa((prev) => !prev)}
                                 className="secondary text-sm w-full"
                             >
-                                {show2fa ? "Ukryj 2FA" : "Wprowadź kod 2FA"}
+                                {show2fa ? t('auth.twoFactorHide') : t('auth.twoFactorShow')}
                             </button>
                             <button
                                 type="submit"
                                 className="primary text-sm w-full"
                             >
-                                Zaloguj
+                                {t('common.login')}
                             </button>
                         </div>
                         <div className="text-center mt-2 w-full">
@@ -131,7 +150,7 @@ const Login: React.FC = () => {
                                 href="/reset-password"
                                 className="text-sm text-blue-600 hover:text-blue-800"
                             >
-                                Zapomniałeś hasła?
+                                {t('auth.forgotPassword')}
                             </a>
                         </div>
                     </form>
